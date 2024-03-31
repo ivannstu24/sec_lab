@@ -1,30 +1,43 @@
+"""
+#Задание 2
 
+def checking_correctness(email):
+    length = len(email)
 
-# ЗДААНИЕ 2
-def num_unique_emails(emails):
-    unique_emails = set()
+    if email[0] == '.' or email[-1] == '.':
+        return False
 
-    for email in emails:
-        local, domain = email.split('@')
-        # Удаляем все точки из локальной части
-        local = local.replace('.', '')
-        # Если есть знак "+", то отбрасываем все после него
-        if '+' in local:
-            local = local.split('+')[0]
-        # Добавляем в множество обработанный адрес
-        unique_emails.add(local + '@' + domain)
+    if length < 6 or length > 30:
+        return False
 
-    return len(unique_emails)
+    if ".." in email:
+        return False
 
+    for i in email:
+        if i in "&=+<>,_\'-" or i not in "abcdefghijklmnopqrstuvwxyz1234567890.":
+            return False
+    return True
 
-# Пример использования
 emails = [
-    "merzovik69@mail.ru",
+    "merzovlaik69@mail.ru",
     "merzo.vik.69@mail.ru",
     "merzovik69@mail.bru"
 ]
-print(num_unique_emails(emails))  # Вывод: 2
 
+for i in range(len(emails)):
+    email_name, email_domen = emails[i].split('@')
+
+    email_name = email_name.split('*')[0]
+
+    if not checking_correctness(email_name):
+        raise Exception("Invalid email - {}".format(emails[i]))
+
+    email_name = ''.join(email_name.split('.'))
+
+    emails[i] = email_name + '@' + email_domen
+
+print(len(set(emails))) 
+"""
 
 
 """#ЗАДАНИЕ 3
