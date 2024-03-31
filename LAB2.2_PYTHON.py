@@ -53,47 +53,6 @@ def sum_of_divisible_by_three(numbers):
 numbers = [3, 333, 570, 99]
 print(sum_of_divisible_by_three(numbers))"""
 
-"""# ЗАДАНИЕ 1 (Скорее всего не правильно)
-
-def find_unvisited_stones(N, stones, birds):
-    # Отсортируем птиц по возрастанию
-    birds.sort()
-
-    # Создадим массив для отметки посещенных валунов
-    visited = [False] * (stones + 1)
-
-    # Пройдемся по каждой птице
-    for bird in birds:
-        # Начнем с первого валуна
-        position = 0
-        while position <= stones:
-            # Если птица уже посетила эту позицию, то ищем следующую
-            if visited[position]:
-                position += bird
-            else:
-                # Отметим все валуны, которые посетит птица
-                while position <= stones:
-                    visited[position] = True
-                    position += bird
-
-    # Подсчитаем количество непосещенных валунов
-    unvisited_stones = sum(1 for stone in visited if not stone)
-
-    return unvisited_stones
-
-
-# Пример использования
-N = 2
-stones = 6
-birds = [3, 2]
-print(find_unvisited_stones(N, stones, birds))  # Выведет: 2
-
-N = 2
-stones = 6
-birds = [5, 1]
-print(find_unvisited_stones(N, stones, birds))  # Выведет: 0"""
-
-
 """
 #ЗАДАНИЕ 1
 
