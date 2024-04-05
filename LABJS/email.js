@@ -1,6 +1,9 @@
+// Функция для подсчета количества уникальных email адресов
 function numUniqueEmails(emails) {
+    // Создаем множество для хранения уникальных адресов
     var uniqueEmails = new Set();
 
+    // Проходим по каждому email в массиве
     for (var i = 0; i < emails.length; i++) {
         var email = emails[i];
         var parts = email.split('@');
@@ -19,6 +22,7 @@ function numUniqueEmails(emails) {
         uniqueEmails.add(local + '@' + domain);
     }
 
+    // Возвращаем количество уникальных адресов, равное размеру множества
     return uniqueEmails.size;
 }
 
@@ -30,8 +34,10 @@ var emails = [
     "valera228@gmail.com"
 ];
 
-// Вывод результата в HTML-страничку
+// Вызов функции для подсчета количества уникальных адресов
 var uniqueEmailCount = numUniqueEmails(emails);
+
+// Вывод результата в HTML-страничку
 document.getElementById('result').textContent = 'Количество уникальных адресов: ' + uniqueEmailCount;
 
 // Вывод результата в консоль
