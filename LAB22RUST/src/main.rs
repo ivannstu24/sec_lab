@@ -43,44 +43,63 @@ fn main() {
 
 use std::collections::HashSet;
 
-// Функция для подсчета количества уникальных email адресов
-fn num_unique_emails(emails: Vec<&str>) -> usize {
-    // Создаем HashSet для хранения уникальных адресов
-    let mut unique_emails: HashSet<String> = HashSet::new();
-
-    // Проходим по каждому email в массиве
-    for email in emails {
-        // Разделяем email на локальную часть и домен
-        let parts: Vec<&str> = email.split('@').collect();
-        let local = parts[0];
-        let domain = parts[1];
-        
-        // Удаляем все точки из локальной части
-        let mut modified_local = local.replace(".", "");
-        // Если есть знак "+", то отбрасываем все после него
-        if let Some(idx) = modified_local.find('+') {
-            modified_local = String::from(&modified_local[..idx]);
-        }
-        // Формируем модифицированный email адрес и добавляем его в HashSet
-        let modified_email = format!("{}@{}", modified_local, domain);
-        unique_emails.insert(modified_email);
+// Функция для проверки корректности email-адреса
+fn checking_correctness(email: &str) -> bool {
+    let length = email.len();
+    if email.starts_with('.') || email.ends_with('.') {
+        return false;
     }
-
-    // Возвращаем количество уникальных адресов
-    unique_emails.len()
+    if length < 6 || length > 30 {
+        return false;
+    }
+    if email.contains("..") {
+        return false;
+    }
+    let valid_characters = "abcdefghijklmnopqrstuvwxyz1234567890.";
+    if email.chars().any(|c| !valid_characters.contains(c)) {
+        return false;
+    }
+    true
 }
 
 fn main() {
-    // Пример входных данных
     let emails = vec![
-        "merzovik69@mail.ru",
+        "merzovlaik69@mail.ru",
         "merzo.vik.69@mail.ru",
-        "merzovik69@mail.ru",
-        "merzovik689@mail.ru"
+        "merzovik69@mail.bru",
     ];
-    // Выводим результат работы функции
-    println!("{}", num_unique_emails(emails)); // Вывод: 2
+
+    // Множество для хранения уникальных email-адресов
+    let mut unique_emails = HashSet::new();
+
+    // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+    for email in &emails {
+        // Разбиваем email-адрес на имя пользователя и домен
+        let parts: Vec<&str> = email.split('@').collect();
+        let mut email_name = parts[0].to_string();
+        let email_domain = parts[1];
+
+        // Удаляем символ '*' из имени пользователя
+        if let Some(asterisk_index) = email_name.find('*') {
+            email_name.truncate(asterisk_index);
+        }
+
+        // Проверяем корректность имени пользователя
+        if !checking_correctness(&email_name) {
+            panic!("Invalid email - {}", email);
+        }
+
+        // Удаляем точки из имени пользователя
+        email_name.retain(|c| c != '.');
+
+        // Добавляем корректный email-адрес в множество уникальных адресов
+        unique_emails.insert(format!("{}@{}", email_name, email_domain));
+    }
+
+    // Выводим количество уникальных email-адресов
+    println!("{}", unique_emails.len());
 }
+
 */
 
 /*
