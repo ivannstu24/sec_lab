@@ -51,45 +51,67 @@ import (
 	"strings"
 )
 
-// Функция для подсчета количества уникальных email адресов
-func numUniqueEmails(emails []string) int {
-	uniqueEmails := make(map[string]bool)
-
-    // Проходим по каждому email в массиве
-	for _, email := range emails {
-        // Разделяем email на локальную часть и домен
-		parts := strings.Split(email, "@")
-		local := parts[0]
-		domain := parts[1]
-
-		// Удаляем все точки из локальной части
-		local = strings.ReplaceAll(local, ".", "")
-
-		// Если есть знак "+", то отбрасываем все после него
-		if strings.Contains(local, "+") {
-			local = strings.Split(local, "+")[0]
-		}
-
-		// Добавляем в множество обработанный адрес
-		uniqueEmails[local+"@"+domain] = true
+func isEmailCorrect(email string) bool {
+	// Проверка длины email-адреса
+	length := len(email)
+	if email[0] == '.' || email[length-1] == '.' {
+		return false
+	}
+	if length < 6 || length > 30 {
+		return false
 	}
 
-	return len(uniqueEmails)
+	// Проверка на наличие двух точек подряд
+	if strings.Contains(email, "..") {
+		return false
+	}
+
+	// Проверка символов в email-адресе
+	validChars := "abcdefghijklmnopqrstuvwxyz1234567890."
+	for _, c := range email {
+		if !strings.ContainsRune(validChars, c) && !strings.Contains("&=+<>,_'-", string(c)) {
+			return false
+		}
+	}
+	return true
 }
 
 func main() {
-    // Пример входных данных
 	emails := []string{
-		"merzovik69@mail.ru",
+		"merzovlaik69@mail.ru",
 		"merzo.vik.69@mail.ru",
-		"merzovik69@mail.ru",
-		"merzovik69@mail.ru",
-		"helpme69@mail.ru",
-		"help.me69@mail.ru",
+		"merzovik69@mail.bru",
 	}
-    // Выводим результат работы функции
-	fmt.Println(numUniqueEmails(emails)) // Вывод: 2
+
+	// Создаем мапу для хранения уникальных email-адресов
+	uniqueEmails := make(map[string]bool)
+
+	// Проверяем каждый email-адрес и добавляем его в мапу, если он корректен
+	for _, email := range emails {
+		// Разбиваем email-адрес на имя пользователя и домен
+		parts := strings.Split(email, "@")
+		emailName := parts[0]
+		emailDomain := parts[1]
+
+		// Удаляем символ '*' из имени пользователя
+		emailName = strings.Split(emailName, "*")[0]
+
+		// Проверяем корректность имени пользователя
+		if !isEmailCorrect(emailName) {
+			panic(fmt.Sprintf("Invalid email - %s", email))
+		}
+
+		// Удаляем точки из имени пользователя
+		emailName = strings.ReplaceAll(emailName, ".", "")
+
+		// Добавляем корректный email-адрес в мапу уникальных адресов
+		uniqueEmails[emailName+"@"+emailDomain] = true
+	}
+
+	// Подсчитываем количество уникальных email-адресов
+	fmt.Println(len(uniqueEmails))
 }
+
 
 */
 
