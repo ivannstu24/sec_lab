@@ -1,3 +1,4 @@
+//задание 2
 require 'set'
 
 def checking_correctness(email)
@@ -45,3 +46,33 @@ end
 
 # Подсчитываем количество уникальных email-адресов
 puts unique_emails.length
+
+
+// задание 3
+
+def sum_of_divisible_by_three(numbers)
+    # Инициализируем переменную для хранения суммы
+    total = 0
+
+    # Перебираем числа из массива
+    numbers.each do |number|
+        # Преобразуем число в строку и перебираем каждую его цифру
+        number.to_s.chars.each do |digit|
+            # Преобразуем символ цифры в целое число
+            digit_int = digit.to_i
+            # Проверяем, делится ли текущая цифра на 3 без остатка
+            if digit_int % 3 == 0
+                # Если делится, добавляем её к общей сумме
+                total += digit_int
+            end
+        end
+    end
+
+    # Возвращаем общую сумму
+    return total
+end
+
+# Пример использования:
+numbers = [3, 3333, 570, 99]
+puts sum_of_divisible_by_three(numbers)
+
