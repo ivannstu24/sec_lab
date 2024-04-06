@@ -49,49 +49,80 @@ class Program
 
 /*
 
-// Задание 2
-
+//Задание 2
 using System;
 using System.Collections.Generic;
 
-class Program
+class EmailChecker
 {
-    // Функция для подсчета количества уникальных email адресов
-    static int NumUniqueEmails(string[] emails)
+    public static bool IsEmailCorrect(string email)
     {
-        HashSet<string> uniqueEmails = new HashSet<string>();
-
-        // Обработка каждого email адреса
-        foreach (string email in emails)
+        // Проверка длины email-адреса
+        int length = email.Length;
+        if (email[0] == '.' || email[length - 1] == '.')
         {
-            // Разделение адреса на локальную и доменную часть
-            string[] parts = email.Split('@');
-            string local = parts[0];
-            string domain = parts[1];
-            
-            // Удаляем все точки из локальной части
-            local = local.Replace(".", "");
-            // Если есть знак "+", то отбрасываем все после него
-            if (local.Contains("+"))
-            {
-                local = local.Split('+')[0];
-            }
-            // Добавляем в множество обработанный адрес
-            uniqueEmails.Add(local + "@" + domain);
+            return false;
+        }
+        if (length < 6 || length > 30)
+        {
+            return false;
         }
 
-        return uniqueEmails.Count;
+        // Проверка на наличие двух точек подряд
+        if (email.Contains(".."))
+        {
+            return false;
+        }
+
+        // Проверка символов в email-адресе
+        foreach (char c in email)
+        {
+            if ("&=+<>,_\'-".IndexOf(c) != -1 ||
+                ("abcdefghijklmnopqrstuvwxyz1234567890.".IndexOf(c) == -1))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     static void Main(string[] args)
     {
-        // Пример использования функции
         string[] emails = {
-            "merzovik69@mail.ru",
+            "merzovlaik69@mail.ru",
             "merzo.vik.69@mail.ru",
-            "merzovik69@mail.ru"
+            "merzovik69@mail.bru"
         };
-        Console.WriteLine(NumUniqueEmails(emails)); // Вывод: 2
+
+        // Создаем множество для хранения уникальных email-адресов
+        HashSet<string> uniqueEmails = new HashSet<string>();
+
+        // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+        foreach (string email in emails)
+        {
+            // Разбиваем email-адрес на имя пользователя и домен
+            string[] parts = email.Split('@');
+            string emailName = parts[0];
+            string emailDomain = parts[1];
+
+            // Удаляем символ '*' из имени пользователя
+            emailName = emailName.Split('*')[0];
+
+            // Проверяем корректность имени пользователя
+            if (!IsEmailCorrect(emailName))
+            {
+                throw new ArgumentException("Invalid email - " + email);
+            }
+
+            // Удаляем точки из имени пользователя
+            emailName = emailName.Replace(".", "");
+
+            // Добавляем корректный email-адрес в множество уникальных адресов
+            uniqueEmails.Add(emailName + "@" + emailDomain);
+        }
+
+        // Подсчитываем количество уникальных email-адресов
+        Console.WriteLine(uniqueEmails.Count);
     }
 }
 
