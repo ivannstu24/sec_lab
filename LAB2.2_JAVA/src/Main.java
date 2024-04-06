@@ -2,45 +2,68 @@
 // Задание 2
 import java.util.HashSet;
 
-// Основной класс программы
 public class Main {
-    // Метод для подсчета количества уникальных email адресов
-    public static int numUniqueEmails(String[] emails) {
-        // Создаем HashSet для хранения уникальных адресов
-        HashSet<String> uniqueEmails = new HashSet<>();
 
-        // Проходим по каждому email в массиве
-        for (String email : emails) {
-            // Разделяем email на локальную часть и домен
-            String[] parts = email.split("@");
-            String local = parts[0];
-            String domain = parts[1];
-
-            // Удаляем все точки из локальной части
-            local = local.replace(".", "");
-            // Если есть знак "+", то отбрасываем все после него
-            if (local.contains("+")) {
-                local = local.split("\\+")[0];
-            }
-            // Добавляем в множество обработанный адрес
-            uniqueEmails.add(local + "@" + domain);
+    public static boolean isEmailCorrect(String email) {
+        // Проверка длины email-адреса
+        int length = email.length();
+        if (email.charAt(0) == '.' || email.charAt(length - 1) == '.') {
+            return false;
+        }
+        if (length < 6 || length > 30) {
+            return false;
         }
 
-        // Возвращаем размер множества, который и является количеством уникальных адресов
-        return uniqueEmails.size();
+        // Проверка на наличие двух точек подряд
+        if (email.contains("..")) {
+            return false;
+        }
+
+        // Проверка символов в email-адресе
+        for (int i = 0; i < length; i++) {
+            char c = email.charAt(i);
+            if ("&=+<>,_\'-".indexOf(c) != -1 ||
+                    ("abcdefghijklmnopqrstuvwxyz1234567890.".indexOf(c) == -1)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    // Метод для запуска программы
     public static void main(String[] args) {
-        // Пример массива email адресов
         String[] emails = {
-                "merzovik69@mail.ru",
+                "merzovlaik69@mail.ru",
                 "merzo.vik.69@mail.ru",
-                "merzovik69@mail.ru",
-                "mama69@mail.ru"
+                "merzovik69@mail.bru"
         };
-        // Выводим результат работы метода numUniqueEmails
-        System.out.println(numUniqueEmails(emails)); // Вывод: 2
+
+        // Создаем множество для хранения уникальных email-адресов
+        HashSet<String> uniqueEmails = new HashSet<>();
+
+        // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+        for (String email : emails) {
+            // Разбиваем email-адрес на имя пользователя и домен
+            String[] parts = email.split("@");
+            String emailName = parts[0];
+            String emailDomain = parts[1];
+
+            // Удаляем символ '*' из имени пользователя
+            emailName = emailName.split("\\*")[0];
+
+            // Проверяем корректность имени пользователя
+            if (!isEmailCorrect(emailName)) {
+                throw new IllegalArgumentException("Invalid email - " + email);
+            }
+
+            // Удаляем точки из имени пользователя
+            emailName = emailName.replace(".", "");
+
+            // Добавляем корректный email-адрес в множество уникальных адресов
+            uniqueEmails.add(emailName + "@" + emailDomain);
+        }
+
+        // Подсчитываем количество уникальных email-адресов
+        System.out.println(uniqueEmails.size());
     }
 }
 */
