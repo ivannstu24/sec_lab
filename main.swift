@@ -36,48 +36,68 @@
 //
 //
 //// задание 2
-//
-//import Foundation
-//
-//// Функция для подсчета количества уникальных адресов электронной почты
-//func numUniqueEmails(_ emails: [String]) -> Int {
-//    // Множество для хранения уникальных адресов электронной почты
-//    var uniqueEmails = Set<String>()
-//
-//    // Перебираем каждый адрес электронной почты
-//    for email in emails {
-//        let parts = email.split(separator: "@")
-//        guard parts.count == 2 else {
-//            continue
-//        }
-//
-//        var local = String(parts[0])
-//        let domain = String(parts[1])
-//
-//        // Удаляем точки из локальной части адреса
-//        local = local.replacingOccurrences(of: ".", with: "")
-//
-//        // Удаляем все после символа '+' (если присутствует)
-//        if let plusIndex = local.firstIndex(of: "+") {
-//            local = String(local[..<plusIndex])
-//        }
-//
-//        // Добавляем обработанный адрес электронной почты в множество
-//        uniqueEmails.insert(local + "@" + domain)
-//    }
-//
-//    return uniqueEmails.count
-//}
-//
-//// Пример использования:
-//let emails = [
-//    "merzovik69@mail.ru",
-//    "merzo.vik.69@mail.ru",
-//    "merzovik69@mail.ru",
-//    "halalalal69@mail.ru"
-//]
-//print(numUniqueEmails(emails))  // Ожидаемый результат: 2
-//
+
+import Foundation
+
+// Функция для проверки корректности email-адреса
+func checkingCorrectness(_ email: String) -> Bool {
+    let length = email.count
+    if email.first == "." || email.last == "." {
+        return false
+    }
+    if length < 6 || length > 30 {
+        return false
+    }
+    if email.contains("..") {
+        return false
+    }
+    let validCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.")
+    if email.rangeOfCharacter(from: validCharacters.inverted) != nil {
+        return false
+    }
+    return true
+}
+
+// Список email-адресов
+let emails = [
+    "merzovlaik69@mail.ru",
+    "merzo.vik.69@mail.ru",
+    "merzovik69@mail.bru"
+]
+
+// Множество для хранения уникальных email-адресов
+var uniqueEmails = Set<String>()
+
+// Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+for email in emails {
+    // Разбиваем email-адрес на имя пользователя и домен
+    let components = email.components(separatedBy: "@")
+    var emailName = components[0]
+    let emailDomain = components[1]
+    
+    // Удаляем символ '*' из имени пользователя
+    if let asteriskIndex = emailName.firstIndex(of: "*") {
+        emailName = String(emailName[..<asteriskIndex])
+    }
+    
+    // Проверяем корректность имени пользователя
+    guard checkingCorrectness(emailName) else {
+        fatalError("Invalid email - \(email)")
+    }
+    
+    // Удаляем точки из имени пользователя
+    emailName = emailName.replacingOccurrences(of: ".", with: "")
+    
+    // Добавляем корректный email-адрес в множество уникальных адресов
+    uniqueEmails.insert("\(emailName)@\(emailDomain)")
+}
+
+// Выводим количество уникальных email-адресов
+print(uniqueEmails.count)
+
+
+
+
 //// задание 3
 //
 //import Foundation
