@@ -32,35 +32,68 @@ fun main() {
  */
 
 
-/* // Задание 2: Программа для подсчета количества уникальных email адресов.
-fun numUniqueEmails(emails: List<String>): Int {
-    // Создаем множество, чтобы хранить уникальные адреса.
-    val uniqueEmails = mutableSetOf<String>()
-
-    // Обходим каждый email адрес в списке.
-    for (email in emails) {
-        // Разделяем адрес на локальную часть и домен.
-        val (local, domain) = email.split('@')
-        // Удаляем все точки из локальной части адреса.
-        val processedLocal = local.replace(".", "")
-        // Если есть символ "+", обрезаем локальную часть до него.
-        val finalLocal = if ("+" in processedLocal) processedLocal.split("+")[0] else processedLocal
-        // Добавляем обработанный email адрес в множество уникальных адресов.
-        uniqueEmails.add("$finalLocal@$domain")
+/*  // Задание 2
+fun isEmailCorrect(email: String): Boolean {
+    // Проверка длины email-адреса
+    val length = email.length
+    if (email[0] == '.' || email[length - 1] == '.') {
+        return false
+    }
+    if (length < 6 || length > 30) {
+        return false
     }
 
-    return uniqueEmails.size
+    // Проверка на наличие двух точек подряд
+    if (email.contains("..")) {
+        return false
+    }
+
+    // Проверка символов в email-адресе
+    for (c in email) {
+        if ("&=+<>,_\'-".indexOf(c) != -1 ||
+            !("abcdefghijklmnopqrstuvwxyz1234567890.".contains(c))) {
+            return false
+        }
+    }
+    return true
 }
 
 fun main() {
-    val emails = listOf(
-        "merzovik69@mail.ru",
+    val emails = arrayOf(
+        "merzovlaik69@mail.ru",
         "merzo.vik.69@mail.ru",
-        "merzovik69@mail.ru",
-        "merzovsik69@mail.ru"
+        "merzovik69@mail.bru"
     )
-    println(numUniqueEmails(emails))  // Вывод: 2
+
+    // Создаем множество для хранения уникальных email-адресов
+    val uniqueEmails = HashSet<String>()
+
+    // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+    for (email in emails) {
+        // Разбиваем email-адрес на имя пользователя и домен
+        val parts = email.split('@')
+        var emailName = parts[0]
+        val emailDomain = parts[1]
+
+        // Удаляем символ '*' из имени пользователя
+        emailName = emailName.split('*')[0]
+
+        // Проверяем корректность имени пользователя
+        if (!isEmailCorrect(emailName)) {
+            throw IllegalArgumentException("Invalid email - $email")
+        }
+
+        // Удаляем точки из имени пользователя
+        emailName = emailName.replace(".", "")
+
+        // Добавляем корректный email-адрес в множество уникальных адресов
+        uniqueEmails.add("$emailName@$emailDomain")
+    }
+
+    // Подсчитываем количество уникальных email-адресов
+    println(uniqueEmails.size)
 }
+
  */
 
 
