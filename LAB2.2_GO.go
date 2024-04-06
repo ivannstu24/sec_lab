@@ -66,6 +66,11 @@ func isEmailCorrect(email string) bool {
 		return false
 	}
 
+	// Проверка наличия символа '&' в имени пользователя
+	if strings.Contains(email, "&") {
+		return false
+	}
+
 	// Проверка символов в email-адресе
 	validChars := "abcdefghijklmnopqrstuvwxyz1234567890."
 	for _, c := range email {
@@ -78,7 +83,7 @@ func isEmailCorrect(email string) bool {
 
 func main() {
 	emails := []string{
-		"merzovlaik69@mail.ru",
+		".merzovlaik69@mail.ru",
 		"merzo.vik.69@mail.ru",
 		"merzovik69@mail.bru",
 	}
