@@ -1,3 +1,42 @@
+//Задание 1
+
+def unvisited_stones(n, stones, birds)
+  # Создаем массив visited, инициализированный нулями, чтобы отслеживать,
+  # сколько раз каждый камень был посещен
+  visited = Array.new(stones, 0)
+
+  # Проходим по каждой птице в списке birds
+  birds.each do |bird|
+    # Проходим по каждому камню от 1 до общего количества камней stones
+    (1..stones).each do |i|
+      # Если номер камня делится нацело на число, соответствующее текущей птице,
+      # увеличиваем счетчик посещенности этого камня на 1
+      if i % bird == 0
+        visited[i - 1] += 1
+      end
+    end
+  end
+
+  # Инициализируем счетчик непосещенных камней
+  unvisited_count = 0
+
+  # Подсчитываем количество камней, которые не были посещены ни одной птицей
+  visited.each do |count|
+    if count == 0
+      unvisited_count += 1
+    end
+  end
+
+  return unvisited_count
+end
+
+# Примеры использования:
+puts unvisited_stones(2, 10, [7, 2])
+puts unvisited_stones(2, 6, [9, 7])
+
+
+
+
 //задание 2
 require 'set'
 
