@@ -1,68 +1,67 @@
 section .data
-    numbers dd 3, 333, 570, 99
-    num_numbers equ ($ - numbers) / 4
-    total dd 0
+    numbers db 33, 22, 11, 123
+    len equ $ - numbers
+    newline db 0x0A
+    newline_len equ $ - newline
+    sum_msg db "Sum of numbers divisible by 3: ", 0
+    sum_msg_len equ $ - sum_msg
+
+section .bss
+    sum resq 1  ; выделяем место для хранения суммы
 
 section .text
     global _start
 
 _start:
-    ; Инициализация
-    xor esi, esi   ; Индекс в массиве чисел
-    mov eax, [total]   ; Обнуление суммы
-    mov dword [eax], 0
-    
+    mov rsi, numbers    ; rsi указывает на начало массива чисел
+    mov rcx, len        ; rcx содержит количество чисел в массиве
+
+    xor rax, rax        ; rax будет использоваться для суммы
+    xor rbx, rbx        ; rbx будет использоваться для проверки деления на 3
+
 sum_loop:
-    cmp esi, num_numbers   ; Проверка, достигли ли конца массива чисел
-    jge finish_sum
-    
-    ; Получение текущего числа
-    mov edx, esi
-    call get_current_number
-    
-    ; Проверка каждой цифры на делимость на 3
-    mov edi, eax   ; EDI указывает на текущее число
-    xor ebx, ebx   ; Сброс счетчика цифр
-digit_loop:
-    movzx ecx, byte [edi]   ; Загрузка текущей цифры
-    test cl, cl   ; Проверка, является ли текущая цифра нулевым символом (концом строки)
-    jz .end_of_digits   ; Если да, завершаем цикл
-    sub cl, '0'   ; Преобразование символа в число
-    mov edx, ecx
-    mov eax, 3
-    xor edx, edx
-    div eax
-    cmp edx, 0
-    jne .not_divisible   ; Если остаток не равен 0, переходим к следующей цифре
-    add dword [total], ecx   ; Добавляем цифру к сумме
-.not_divisible:
-    inc edi   ; Переходим к следующей цифре
-    jmp digit_loop
+    movzx rbx, byte [rsi]   ; загрузка текущего числа в rbx
+    inc rsi                 ; переход к следующему числу
+    test rbx, 0x01          ; проверка на нечетность числа
+    jnz skip_if_odd         ; если число нечетное, пропустить
 
-.end_of_digits:
-    inc esi   ; Переходим к следующему числу
-    jmp sum_loop
+    mov rdx, 0              ; сброс регистра rdx перед делением
+    mov rdi, 3              ; делитель
+    div rdi                 ; деление rbx на 3
+    test rdx, rdx           ; проверка остатка от деления
+    jnz skip_if_not_divisible_by_3  ; если остаток не равен 0, пропустить
 
-finish_sum:
-    ; Вывод суммы
-    mov eax, [total]
-    call print_sum
-    
-    ; Выход из программы
-    mov eax, 1
-    xor ebx, ebx
-    int 0x80
+    add rax, rbx            ; если число делится на 3, добавить его к сумме
 
-get_current_number:
-    ; EDX содержит индекс числа
-    mov eax, [numbers + edx*4]
-    ret
+skip_if_not_divisible_by_3:
+skip_if_odd:
+    loop sum_loop           ; повторять для остальных чисел
 
-print_sum:
-    ; Вывод числа в stdout
-    mov ebx, eax
-    mov eax, 4
-    mov ecx, esp
-    mov edx, 4
-    int 0x80
-    ret
+    ; сохраняем сумму в переменной sum
+    mov [sum], rax
+
+    ; вывод сообщения о сумме
+    mov rax, 1              ; номер системного вызова для write
+    mov rdi, 1              ; файловый дескриптор stdout
+    mov rsi, sum_msg        ; адрес строки для вывода
+    mov rdx, sum_msg_len    ; длина строки
+    syscall                 ; вызов системного вызова
+
+    ; вывод суммы
+    mov rax, 1              ; номер системного вызова для write
+    mov rdi, 1              ; файловый дескриптор stdout
+    mov rsi, sum            ; адрес переменной с суммой
+    mov rdx, 8              ; длина суммы (64 бита)
+    syscall                 ; вызов системного вызова
+
+    ; вывод новой строки
+    mov rax, 1              ; номер системного вызова для write
+    mov rdi, 1              ; файловый дескриптор stdout
+    mov rsi, newline        ; адрес новой строки
+    mov rdx, 1              ; длина новой строки
+    syscall                 ; вызов системного вызова
+
+    ; завершение программы
+    mov rax, 60             ; код завершения системного вызова
+    xor rdi, rdi            ; передача 0 в качестве кода завершения
+    syscall
