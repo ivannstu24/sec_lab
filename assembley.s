@@ -1,5 +1,5 @@
 section .data
-    numbers db 33, 22, 11, 123
+    numbers db 33, 232, 11, 123
     len equ $ - numbers
     newline db 0x0A
     newline_len equ $ - newline
