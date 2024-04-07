@@ -83,10 +83,41 @@ int main() {
 
     // Создаем множество для хранения уникальных email-адресов
     std::unordered_set<std::string> uniqueEmails;
+    // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
+    for (const std::string& email : emails) {
+        // Разбиваем email-адрес на имя пользователя и домен
+        std::size_t pos = email.find('@');
+        std::string emailName = email.substr(0, pos);
+        std::string emailDomain = email.substr(pos + 1);
+
+        // Удаляем символ '*' из имени пользователя
+        pos = emailName.find('*');
+        if (pos != std::string::npos) {
+            emailName.erase(pos);
+        }
+
+        // Проверяем корректность имени пользователя
+        if (!isEmailCorrect(emailName)) {
+            throw std::invalid_argument("Invalid email - " + email);
+        }
+
+        // Удаляем точки из имени пользователя
+        emailName.erase(std::remove(emailName.begin(), emailName.end(), '.'), emailName.end());
+
+        // Добавляем корректный email-адрес в множество уникальных адресов
+        uniqueEmails.insert(emailName + '@' + emailDomain);
+    }
+
+    // Подсчитываем количество уникальных email-адресов
+    std::cout << uniqueEmails.size() << std::endl;
+
+    return 0;
+}
+
 
 */
 
-/*
+
 
 //задание 3
 #include <iostream>
@@ -123,34 +154,4 @@ int main() {
     return 0;
 }
 
-    // Проверяем каждый email-адрес и добавляем его в множество, если он корректен
-    for (const std::string& email : emails) {
-        // Разбиваем email-адрес на имя пользователя и домен
-        std::size_t pos = email.find('@');
-        std::string emailName = email.substr(0, pos);
-        std::string emailDomain = email.substr(pos + 1);
 
-        // Удаляем символ '*' из имени пользователя
-        pos = emailName.find('*');
-        if (pos != std::string::npos) {
-            emailName.erase(pos);
-        }
-
-        // Проверяем корректность имени пользователя
-        if (!isEmailCorrect(emailName)) {
-            throw std::invalid_argument("Invalid email - " + email);
-        }
-
-        // Удаляем точки из имени пользователя
-        emailName.erase(std::remove(emailName.begin(), emailName.end(), '.'), emailName.end());
-
-        // Добавляем корректный email-адрес в множество уникальных адресов
-        uniqueEmails.insert(emailName + '@' + emailDomain);
-    }
-
-    // Подсчитываем количество уникальных email-адресов
-    std::cout << uniqueEmails.size() << std::endl;
-
-    return 0;
-}
-*/
