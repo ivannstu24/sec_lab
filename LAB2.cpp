@@ -1,5 +1,48 @@
 /*
+//задание 1
+#include <iostream>
+#include <vector>
 
+int unvisited_stones(int N, int stones, std::vector<int> birds) {
+    // Создаем вектор visited, инициализированный нулями, чтобы отслеживать,
+    // сколько раз каждый камень был посещен
+    std::vector<int> visited(stones, 0);
+
+    // Проходим по каждой птице в списке birds
+    for (int bird : birds) {
+        // Проходим по каждому камню от 1 до общего количества камней stones
+        for (int i = 1; i <= stones; ++i) {
+            // Если номер камня делится нацело на число, соответствующее текущей птице,
+            // увеличиваем счетчик посещенности этого камня на 1
+            if (i % bird == 0) {
+                visited[i - 1] += 1;
+            }
+        }
+    }
+
+    // Инициализируем счетчик непосещенных камней
+    int unvisited_count = 0;
+
+    // Подсчитываем количество камней, которые не были посещены ни одной птицей
+    for (int count : visited) {
+        if (count == 0) {
+            unvisited_count += 1;
+        }
+    }
+
+    return unvisited_count;
+}
+
+int main() {
+    // Примеры использования:
+    std::cout << unvisited_stones(2, 10, {7, 2}) << std::endl;
+    std::cout << unvisited_stones(2, 6, {9, 7}) << std::endl;
+    return 0;
+}
+
+*/
+
+/*
 //задание 2
 #include <iostream>
 #include <unordered_set>
