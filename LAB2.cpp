@@ -1,53 +1,65 @@
-/*
-//задание 1
-#include <iostream>
-#include <vector>
 
-int unvisited_stones(int N, int stones, std::vector<int> birds) {
-    // Создаем вектор visited, инициализированный нулями, чтобы отслеживать,
-    // сколько раз каждый камень был посещен
-    std::vector<int> visited(stones, 0);
+ #include <iostream>
+ #include <vector>
 
-    // Проходим по каждой птице в списке birds
-    for (int bird : birds) {
-        // Проходим по каждому камню от 1 до общего количества камней stones
-        for (int i = 1; i <= stones; ++i) {
-            // Если номер камня делится нацело на число, соответствующее текущей птице,
-            // увеличиваем счетчик посещенности этого камня на 1
-            if (i % bird == 0) {
-                visited[i - 1] += 1;
-            }
-        }
-    }
+ int unvisited_stones(int stones, std::vector<int> birds) {
+     // Создаем вектор visited, инициализированный нулями, чтобы отслеживать,
+     // сколько раз каждый камень был посещен
+     std::vector<int> visited(stones, 0);
 
-    // Инициализируем счетчик непосещенных камней
-    int unvisited_count = 0;
+     // Проходим по каждой птице в списке birds
+     for (int bird : birds) {
+         // Проходим по каждому камню от 1 до общего количества камней stones
+         for (int i = 1; i <= stones; ++i) {
+             // Если номер камня делится нацело на число, соответствующее текущей птице,
+             // увеличиваем счетчик посещенности этого камня на 1
+             if (i % bird == 0) {
+                 visited[i - 1] += 1;
+             }
+         }
+     }
 
-    // Подсчитываем количество камней, которые не были посещены ни одной птицей
-    for (int count : visited) {
-        if (count == 0) {
-            unvisited_count += 1;
-        }
-    }
+     // Инициализируем счетчик непосещенных камней
+     int unvisited_count = 0;
 
-    return unvisited_count;
-}
+     // Подсчитываем количество камней, которые не были посещены ни одной птицей
+     for (int count : visited) {
+         if (count == 0) {
+             unvisited_count += 1;
+         }
+     }
 
-int main() {
-    // Примеры использования:
-    std::cout << unvisited_stones(2, 10, {7, 2}) << std::endl;
-    std::cout << unvisited_stones(2, 6, {9, 7}) << std::endl;
-    return 0;
-}
+     return unvisited_count;
+ }
 
-*/
+ int main() {
+     int N;
+     std::cout << "Enter the number of birds: ";
+     std::cin >> N;
 
-/*
-//задание 2
+     std::vector<int> birds(N);
+     std::cout << "Enter the steps of birds: ";
+     for (int i = 0; i < N; ++i) {
+         std::cin >> birds[i];
+     }
+
+     int stones;
+     std::cout << "Enter the total number of stones: ";
+     std::cin >> stones;
+
+     // Пример использования:
+     std::cout << "Number of unvisited stones: " << unvisited_stones(stones, birds) << std::endl;
+
+     return 0;
+ }
+
+ /*
+
 #include <iostream>
 #include <unordered_set>
 #include <string>
 #include <algorithm>
+#include <stdexcept> // Добавлен заголовочный файл для std::invalid_argument
 
 bool isEmailCorrect(const std::string& email) {
     // Проверка длины email-адреса
@@ -59,9 +71,9 @@ bool isEmailCorrect(const std::string& email) {
         return false;
     }
 
-    // Проверка на наличие двух точек подряд
-    if (email.find("..") != std::string::npos) {
-        return false;
+    // Проверка на наличие двух точек или символов @ подряд
+    if (email.find("..") != std::string::npos || email.find("@@") != std::string::npos) {
+        throw std::invalid_argument("Invalid email format: consecutive '@' symbols");
     }
 
     // Проверка символов в email-адресе
@@ -71,13 +83,18 @@ bool isEmailCorrect(const std::string& email) {
             return false;
         }
     }
+
+    // Дополнительная проверка: убедимся, что в email-адресе нет двух символов '@'
+    if (std::count(email.begin(), email.end(), '@') >= 2) {
+        return false;
+    }
+
     return true;
 }
-
 int main() {
     std::string emails[] = {
         "merzovlaik69@mail.ru",
-        "merzo.vik.69@mail.ru",
+        "merzovlaik69@@ma.il.ru",
         "merzovik69@mail.bru"
     };
 
@@ -115,43 +132,42 @@ int main() {
 }
 
 
-*/
 
 
 
-//задание 3
+
 #include <iostream>
-#include <vector>
-#include <string>
 
-int sum_of_divisible_by_three(std::vector<int> numbers) {
-    // Инициализируем переменную для хранения суммы
+// Функция для определения суммы цифр числа, делящихся на 3
+int sumDivisibleBy3(int number) {
     int total = 0;
-
-    // Перебираем числа из вектора
-    for (int number : numbers) {
-        // Преобразуем число в строку и перебираем каждую его цифру
-        std::string num_str = std::to_string(number);
-        for (char digit : num_str) {
-            // Преобразуем символ цифры в целое число
-            int digit_int = digit - '0';
-            // Проверяем, делится ли текущая цифра на 3 без остатка
-            if (digit_int % 3 == 0) {
-                // Если делится, добавляем её к общей сумме
-                total += digit_int;
-            }
+    while (number > 0) {
+        int digit = number % 10;
+        if (digit % 3 == 0) {
+            total += digit;
         }
+        number /= 10;
     }
-    
-    // Возвращаем общую сумму
     return total;
 }
 
 int main() {
-    // Пример использования:
-    std::vector<int> numbers = {3, 33333, 570, 99};
-    std::cout << sum_of_divisible_by_three(numbers) << std::endl;
+    int n;
+    std::cout << "Введите количество чисел: ";
+    std::cin >> n;
+
+    int totalSum = 0;
+
+    for (int i = 0; i < n; ++i) {
+        int num;
+        std::cout << "Введите число: ";
+        std::cin >> num;
+        totalSum += sumDivisibleBy3(num);
+    }
+
+    std::cout << "Сумма всех цифр, которые делятся на 3: " << totalSum << std::endl;
+
     return 0;
 }
 
-
+*/
