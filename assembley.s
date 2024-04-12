@@ -15,41 +15,39 @@ main:
     push rbp
     mov rbp, rsp
     
+    ; Read the number of elements
     mov rdi, fmt_read
     mov rsi, n
     xor rax, rax
     call scanf
 
 _n_loop:
+    ; Decrement the counter
     dec dword [n]
 
+    ; Read the number
     mov rdi, fmt_read
     mov rsi, number
     xor rax, rax
     call scanf
 
+    ; Check if the number is divisible by 3
     mov eax, [number]
-    mov r8, 3
-    xor rdx, rdx
-    div r8
-    cmp rdx, 0
-    je _is_divide_by_3
+    xor edx, edx
+    mov ecx, 3
+    div ecx
+    cmp edx, 0
+    jne _continue_loop ; If not divisible by 3, skip to the next number
 
-    mov eax, [n]
-    cmp eax, 0
-    je _print_func
-    jmp _n_loop
-
-_is_divide_by_3:
-    ; Reset the sum of digits for each number
-    xor ecx, ecx
+    ; If divisible by 3, calculate the sum of its digits
     mov eax, [number]
+    xor ecx, ecx ; Clear the sum register
 
 _sum_digits:
     ; Extract the last digit
     xor edx, edx
-    mov r8, 10
-    div r8
+    mov esi, 10
+    div esi
 
     ; Add the digit to the sum
     add ecx, edx
@@ -61,17 +59,19 @@ _sum_digits:
     ; Add the sum of digits to the count
     add [count], ecx
 
+_continue_loop:
+    ; Check if we have processed all numbers
     mov eax, [n]
     cmp eax, 0
-    je _print_func
-    jmp _n_loop
+    jne _n_loop
 
-_print_func:
+    ; Print the count
     mov rdi, fmt_write
     mov esi, [count]
     xor rax, rax
     call printf
 
+    ; Exit the program
     mov eax, 60
-    xor rdi, rdi
+    xor edi, edi
     syscall
