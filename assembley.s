@@ -57,7 +57,11 @@ _loop:
     jne _loop
 
     mov rdi, [rbp-56]
+    call _intlen
+
+    mov rdi, [rbp-56]
     mov rsi, result
+    mov rdx, rax
     call _int_to_str
 
     mov rsi, result ; выводим число
@@ -74,10 +78,10 @@ _loop:
 _div_3_sum:
     mov r11, rdi
     xor rcx, rcx
-    mov r8, 10
 _div_3_sum_loop:
     xor rdx, rdx
     mov rax, r11
+    mov r8, 10
     div r8 ; rdx:rax / r8 = rax, остаток в rdx
 
     mov r11, rax ; сохраняем всё, кроме последнего разряда в r11
@@ -92,7 +96,8 @@ _div_3_sum_loop:
     je _add
     jne _not_add
 _add:
-    inc rcx
+    imul rax, 3
+    add rcx, rax
 _not_add:
     mov rax, r11
 
@@ -103,21 +108,37 @@ _not_add:
 
 ; rdi - int number
 ; rsi - str ptr
+; rdx - int len
 _int_to_str:
     mov rax, rdi
     mov rbx, 10
+    mov rcx, rdx
+    dec rcx
 
-    xor rcx, rcx
 _int_to_str_loop:
     xor rdx, rdx
     div rbx
     add rdx, 48
     
     mov byte [rsi+rcx], dl
-    inc rcx
+    dec rcx
 
     cmp rax, 0
     jne _int_to_str_loop
+    ret
+
+; rdi - num
+_intlen:
+    mov rax, rdi
+    mov r9, 10
+    xor rcx, rcx
+_intlen_loop:
+    xor rdx, rdx
+    div r9
+    inc rcx
+    cmp rax, 0
+    jne _intlen_loop
+    mov rax, rcx
     ret
 
 
