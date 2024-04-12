@@ -1,85 +1,56 @@
 global main
 
 section .data
-    n: dd 0
-    number: dd 0
-    count: dd 0
-    fmt_read: db "%d", 0
-    fmt_write: db "%d", 10, 0
-
-default rel
-extern printf, scanf
+    n: dq 0                   ; Указатель на число
+    number: dq 0              ; Текущее число для разбора
+    count: dq 0               ; Сумма цифр, делящихся на 3
+    fmt_read: db "%lld", 0    ; Формат строки для чтения числа
+    fmt_write: db "%lld\n", 0 ; Формат строки для вывода суммы
 
 section .text
 main:
     push rbp
     mov rbp, rsp
-    
+
     mov rdi, fmt_read
-    mov rsi, n
+    mov rsi, qword [n]
     xor rax, rax
     call scanf
 
 _n_loop:
-    dec dword [n]
-
     mov rdi, fmt_read
-    mov rsi, number
+    mov rsi, qword [number]
     xor rax, rax
     call scanf
 
-    mov eax, [number]
-    xor ecx, ecx ; Счетчик цифр
-    xor edx, edx ; Текущая цифра
+    mov rax, qword [number]
+    mov rcx, 3
+    xor rdx, rdx
+    div rcx
+    cmp rdx, 0
+    je _is_divide_by_3
 
-_digit_loop:
-    mov ebx, 10
-    div ebx ; Деление на 10 для извлечения цифры
-    mov edx, 0
-    cmp edx, 0
-    je _next_digit
-    mov eax, ecx
-    mul ebx
-    add eax, edx
-    mov ecx, eax
+    mov rax, qword [n]
+    cmp rax, 0
+    je _print_func
+    jmp _n_loop
 
-_next_digit:
-    cmp eax, 0
-    jne _digit_loop
-
-    ; Проверка каждой из цифр на делимость на 3
-    mov eax, ecx
-    xor ecx, ecx
-
-_check_divisibility:
-    mov ebx, 10
-    div ebx ; Деление на 10 для получения следующей цифры
-    mov edx, 0
-    cmp edx, 0
-    je _next_check
-    mov eax, ecx
-    mul ebx
-    add eax, edx
-    mov ecx, eax
-
-_next_check:
-    cmp eax, 0
-    jne _check_divisibility
-
-    ; Добавление к общей сумме
-    add [count], ecx
-
-    mov eax, [n]
-    cmp eax, 0
+_is_divide_by_3:
+    mov rax, qword [number]
+    mov rcx, qword [count]
+    add rcx, rax
+    mov [count], rcx
+    mov rax, qword [n]
+    cmp rax, 0
     je _print_func
     jmp _n_loop
 
 _print_func:
     mov rdi, fmt_write
-    mov esi, [count]
+    mov rsi, qword [count]
     xor rax, rax
     call printf
 
-    mov eax, 60
+    mov rax, 60
     xor rdi, rdi
     syscall
