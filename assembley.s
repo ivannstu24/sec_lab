@@ -15,45 +15,54 @@ main:
     push rbp
     mov rbp, rsp
     
+    ; Считываем количество чисел
     mov rdi, fmt_read
     mov rsi, n
     xor rax, rax
     call scanf
 
 _n_loop:
+    ; Уменьшаем счетчик чисел
     dec dword [n]
 
+    ; Считываем число
     mov rdi, fmt_read
     mov rsi, number
     xor rax, rax
     call scanf
 
+    ; Инициализируем сумму цифр для текущего числа
+    xor ecx, ecx
     mov eax, [number]
-    xor ecx, ecx ; Сумма цифр
 
 _digit_sum:
-    xor edx, edx ; Остаток от деления
+    ; Извлекаем последнюю цифру числа
+    xor edx, edx
     mov ebx, 10
-    div ebx ; Делим на 10, остаток в edx
-    add ecx, edx ; Добавляем остаток к сумме
-    cmp eax, 0
-    jne _digit_sum ; Если число не равно 0, продолжаем цикл
+    div ebx
 
-    mov eax, [sum]
-    add eax, ecx ; Добавляем сумму цифр к общей сумме
-    mov [sum], eax
+    ; Добавляем цифру к сумме
+    add ecx, edx
 
-    mov eax, [n]
+    ; Проверяем, остались ли еще цифры
     cmp eax, 0
-    je _print_func
-    jmp _n_loop
+    jne _digit_sum
+
+    ; Добавляем сумму цифр к общей сумме
+    add [sum], ecx
+
+    ; Проверяем, остались ли еще числа для обработки
+    cmp dword [n], 0
+    jne _n_loop
 
 _print_func:
+    ; Выводим общую сумму цифр
     mov rdi, fmt_write
     mov esi, [sum]
     xor rax, rax
     call printf
 
+    ; Завершаем программу
     mov eax, 60
     xor rdi, rdi
     syscall
