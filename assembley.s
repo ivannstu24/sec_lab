@@ -1,67 +1,59 @@
-section .data
-    numbers db 33, 232, 11, 123
-    len equ $ - numbers
-    newline db 0x0A
-    newline_len equ $ - newline
-    sum_msg db "Sum of numbers divisible by 3: ", 0
-    sum_msg_len equ $ - sum_msg
+global main
 
-section .bss
-    sum resq 1  ; выделяем место для хранения суммы
+section .data
+    n: dd 0
+    number: dd 0
+    sum: dd 0
+    fmt_read: db "%d", 0
+    fmt_write: db "%d", 10, 0
+
+default rel
+extern printf, scanf
 
 section .text
-    global _start
+main:
+    push rbp
+    mov rbp, rsp
+    
+    mov rdi, fmt_read
+    mov rsi, n
+    xor rax, rax
+    call scanf
 
-_start:
-    mov rsi, numbers    ; rsi указывает на начало массива чисел
-    mov rcx, len        ; rcx содержит количество чисел в массиве
+_n_loop:
+    dec dword [n]
 
-    xor rax, rax        ; rax будет использоваться для суммы
-    xor rbx, rbx        ; rbx будет использоваться для проверки деления на 3
+    mov rdi, fmt_read
+    mov rsi, number
+    xor rax, rax
+    call scanf
 
-sum_loop:
-    movzx rbx, byte [rsi]   ; загрузка текущего числа в rbx
-    inc rsi                 ; переход к следующему числу
-    test rbx, 0x01          ; проверка на нечетность числа
-    jnz skip_if_odd         ; если число нечетное, пропустить
+    mov eax, [number]
+    xor ecx, ecx ; Сумма цифр
 
-    mov rdx, 0              ; сброс регистра rdx перед делением
-    mov rdi, 3              ; делитель
-    div rdi                 ; деление rbx на 3
-    test rdx, rdx           ; проверка остатка от деления
-    jnz skip_if_not_divisible_by_3  ; если остаток не равен 0, пропустить
+_digit_sum:
+    xor edx, edx ; Остаток от деления
+    mov ebx, 10
+    div ebx ; Делим на 10, остаток в edx
+    add ecx, edx ; Добавляем остаток к сумме
+    cmp eax, 0
+    jne _digit_sum ; Если число не равно 0, продолжаем цикл
 
-    add rax, rbx            ; если число делится на 3, добавить его к сумме
+    mov eax, [sum]
+    add eax, ecx ; Добавляем сумму цифр к общей сумме
+    mov [sum], eax
 
-skip_if_not_divisible_by_3:
-skip_if_odd:
-    loop sum_loop           ; повторять для остальных чисел
+    mov eax, [n]
+    cmp eax, 0
+    je _print_func
+    jmp _n_loop
 
-    ; сохраняем сумму в переменной sum
-    mov [sum], rax
+_print_func:
+    mov rdi, fmt_write
+    mov esi, [sum]
+    xor rax, rax
+    call printf
 
-    ; вывод сообщения о сумме
-    mov rax, 1              ; номер системного вызова для write
-    mov rdi, 1              ; файловый дескриптор stdout
-    mov rsi, sum_msg        ; адрес строки для вывода
-    mov rdx, sum_msg_len    ; длина строки
-    syscall                 ; вызов системного вызова
-
-    ; вывод суммы
-    mov rax, 1              ; номер системного вызова для write
-    mov rdi, 1              ; файловый дескриптор stdout
-    mov rsi, sum            ; адрес переменной с суммой
-    mov rdx, 8              ; длина суммы (64 бита)
-    syscall                 ; вызов системного вызова
-
-    ; вывод новой строки
-    mov rax, 1              ; номер системного вызова для write
-    mov rdi, 1              ; файловый дескриптор stdout
-    mov rsi, newline        ; адрес новой строки
-    mov rdx, 1              ; длина новой строки
-    syscall                 ; вызов системного вызова
-
-    ; завершение программы
-    mov rax, 60             ; код завершения системного вызова
-    xor rdi, rdi            ; передача 0 в качестве кода завершения
+    mov eax, 60
+    xor rdi, rdi
     syscall
